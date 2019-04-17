@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sctcc.roadshow.user.dao.UserLogMapper">
+    <!--创建用户登录记录-->
+    <insert id="createUserLog" parameterType="com.sctcc.roadshow.user.model.UserLog">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ly_user_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,
+            <if test="login_ip != null and login_ip != ''">
+                login_ip,
+            </if>
+        </trim>
+        <trim prefix=" values (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},
+            <if test="login_ip != null and login_ip != ''">
+                #{login_ip},
+            </if>
+        </trim>
+    </insert>
+
+    <!--条件查询用户数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from ly_user_log
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="create_user != null and create_user.id != null">
+                and create_user = #{create_user.id}
+            </if>
+            <if test="create_userIDs!= null and create_userIDs.length>0">
+                and
+                <foreach item="item" index="index" collection="create_userIDs" open="(" separator="or" close=")">
+                    create_user = #{item}
+                </foreach>
+            </if>
+        </trim>
+    </select>
+    <!--查询用户登陆记录-->
+    <select id="getUserLogs" resultMap="UserLogMap">
+    select * from ly_user_log
+    <trim prefix="where" prefixOverrides="and|or">
+        <if test="UserLog.id != null">
+            and id = #{UserLog.id}
+        </if>
+        <if test="UserLog.create_user != null and UserLog.create_user.id != null">
+            and create_user = #{UserLog.create_user.id}
+        </if>
+        <if test="UserLog.create_userIDs!= null and UserLog.create_userIDs.length>0">
+            and
+            <foreach item="item" index="index" collection="UserLog.create_userIDs" open="(" separator="or" close=")">
+                create_user = #{item}
+            </foreach>
+        </if>
+    </trim>
+    order by create_date DESC
+    <if test="pageStart != null and pageSize != null">
+        limit #{pageStart},#{pageSize}
+    </if>
+    </select>
+    <!--字段映射-->
+    <resultMap id="UserLogMap" type="com.sctcc.roadshow.user.model.UserLog">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="login_ip" column="login_ip"/>
+        <result property="sequence" column="sequence"/>
+    </resultMap>
+</mapper>

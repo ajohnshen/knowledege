@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.user.dao.UserMapper">
+    <!--创建用户-->
+    <insert id="createUser" parameterType="com.wu.knowledge.user.model.User">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="active != null">
+                active,
+            </if>
+            <if test="user_name != null and user_name != ''">
+                user_name,
+            </if>
+            <if test="password != null and password != ''">
+                password,
+            </if>
+            <if test="sex != null and sex.id!=null">
+                sex,
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="cover != null and cover.id!=null">
+                cover,
+            </if>
+            <if test="role != null and role.id!=null">
+                role,
+            </if>
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="school != null and school != ''">
+                school,
+            </if>
+        </trim>
+        <trim prefix=" values (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="active != null">
+                #{active},
+            </if>
+            <if test="user_name != null and user_name != ''">
+                #{user_name},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="sex != null">
+                #{sex.id},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                #{mobile},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="cover != null and cover.id!=null">
+                #{cover.id},
+            </if>
+            <if test="role != null">
+                #{role.id},
+            </if>
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="school != null and school != ''">
+                #{school},
+            </if>
+        </trim>
+    </insert>
+    <!--更新用户-->
+    <update id="updateUser" parameterType="com.wu.knowledge.user.model.User">
+        update user set
+        <if test="create_user != null and create_user.id!=null">
+            create_user = #{create_user.id},
+        </if>
+        <if test="sequence != null">
+            sequence = #{sequence},
+        </if>
+        <if test="active != null">
+            active = #{active},
+        </if>
+        <if test="user_name != null and user_name != ''">
+            user_name=#{user_name},
+        </if>
+        <if test="password != null and password != ''">
+            password=#{password},
+        </if>
+        <if test="sex != null and sex.id!=null">
+            sex=#{sex.id},
+        </if>
+        <if test="mobile != null and mobile != ''">
+            mobile=#{mobile},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name},
+        </if>
+        <if test="cover != null and cover.id!=null">
+            cover = #{cover.id},
+        </if>
+        <if test="role != null and role.id!=null">
+            role=#{role.id},
+        </if>
+        <if test="email != null and email != ''">
+            email=#{email},
+        </if>
+
+        <if test="school != null and school != ''">
+            school = #{school},
+        </if>
+        write_user = #{write_user.id,jdbcType=INTEGER},write_date = #{write_date}
+        where id = #{id}
+    </update>
+    <!--查询单个用户-->
+    <select id="getUserById" parameterType="Integer" resultMap="UserMap">
+        select * from user where id =#{id}
+    </select>
+    <!--通过用户名查询多个用户-->
+    <select id="getUserByNames" parameterType="String" resultMap="UserMap">
+        select * from user where user_name like CONCAT('%',#{user_name} , '%')
+    </select>
+    <!--查询所有用户-->
+    <select id="getAllUsers" resultMap="UserMap">
+        select * from user
+    </select>
+    <!--条件查询用户数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from user
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="active != null">
+                and active = #{active}
+            </if>
+            <if test="user_name != null and user_name != ''">
+                and user_name like CONCAT('%',#{user_name} , '%')
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile=#{mobile}
+            </if>
+            <if test="password != null and password != ''">
+                and password=#{password}
+            </if>
+            <if test="role != null and role.id!=null">
+                and role=#{role.id}
+            </if>
+            <if test="sex != null and sex.id!=null">
+                and sex=#{sex.id}
+            </if>
+            <if test="email != null and email != ''">
+                and email=#{email}
+            </if>
+            <if test="name != null and name != ''">
+                and name like CONCAT('%',#{name} , '%')
+            </if>
+        </trim>
+    </select>
+    <!--条件查询用户-->
+    <select id="getUsers" resultMap="UserMap">
+        select * from user
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="User.id != null">
+                and id=#{User.id}
+            </if>
+            <if test="User.active != null">
+                and active = #{User.active}
+            </if>
+            <if test="User.user_name != null and User.user_name != ''">
+                and user_name like CONCAT('%',#{User.user_name} , '%')
+            </if>
+            <if test="User.mobile != null and User.mobile != ''">
+                and mobile=#{User.mobile}
+            </if>
+            <if test="User.password != null and User.password != ''">
+                and password=#{User.password}
+            </if>
+            <if test="User.role != null and User.role.id != null">
+                and role=#{User.role.id}
+            </if>
+            <if test="User.sex != null and User.sex.id != null">
+                and sex=#{User.sex.id}
+            </if>
+            <if test="User.email != null and User.email != ''">
+                and email=#{User.email}
+            </if>
+            <if test="User.name != null and User.name != ''">
+                and name like CONCAT('%',#{User.name} , '%')
+            </if>
+        </trim>
+        order by if(isnull(sequence),1,0),sequence ASC,create_date DESC
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+    <!--查询用户是否存在-->
+    <select id="getUser" resultMap="UserMap">
+        select * from user
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="User.user_name != null and User.user_name != ''">
+                and user_name = #{User.user_name}
+            </if>
+            <if test="User.password != null and User.password != ''">
+                and password=#{User.password}
+            </if>
+        </trim>
+    </select>
+    <!--用户登录-->
+    <select id="login" resultMap="UserMap">
+        select * from user
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="active != null">
+                and active = #{active}
+            </if>
+            <if test="user_name != null and user_name != ''">
+                and user_name = #{user_name}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile=#{mobile}
+            </if>
+            <if test="password != null and password != ''">
+                and password=#{password}
+            </if>
+        </trim>
+    </select>
+    <!--字段映射-->
+    <resultMap id="UserMap" type="com.wu.knowledge.user.model.User">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="user_name" column="user_name"/>
+        <result property="sequence" column="sequence"/>
+        <result property="active" column="active"/>
+        <result property="password" column="password"/>
+        <result property="mobile" column="mobile"/>
+        <result property="role.id" column="role"/>
+        <result property="sex.id" column="sex"/>
+        <result property="cover.id" column="cover"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="school" column="school"/>
+    </resultMap>
+</mapper>

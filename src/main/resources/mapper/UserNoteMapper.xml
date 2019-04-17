@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.usernote.dao.UserNoteMapper">
+    <!--查询单个用户笔记-->
+    <select id="getUserNoteById" parameterType="Integer" resultMap="UserNoteMap">
+        select * from usernote where id = #{id}
+    </select>
+    <!--条件查询用户笔记数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from usernote
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="user != null and user.id != null">
+                and user = #{user.id}
+            </if>
+            <if test="note != null and note.id != null">
+                and note = #{note.id}
+            </if>
+            <if test="is_collect != null">
+                and is_collect = #{is_collect}
+            </if>
+        </trim>
+    </select>
+    <!--条件查询用户笔记-->
+    <!--根据排序字段升序排序,根据创建时间降序排序-->
+    <select id="getUserNotes" resultMap="UserNoteMap">
+        select * from usernote
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="UserNote.id != null">
+                and id = #{UserNote.id}
+            </if>
+            <if test="UserNote.user != null and UserNote.user.id != null">
+                and user = #{UserNote.user.id}
+            </if>
+            <if test="UserNote.note != null and UserNote.note.id != null">
+                and note = #{UserNote.note.id}
+            </if>
+            <if test="UserNote.is_collect != null">
+                and is_collect = #{UserNote.is_collect}
+            </if>
+        </trim>
+        <choose>
+            <otherwise>
+                order by create_date DESC
+            </otherwise>
+        </choose>
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+
+    <!--  添加一条用户笔记  -->
+    <insert id="createUserNote" parameterType="com.wu.knowledge.usernote.model.UserNote">
+        insert into usernote
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="user != null and user.id != null">
+                user,
+            </if>
+            <if test="note != null and note.id != null">
+                note,
+            </if>
+            <if test="is_collect != null">
+                is_collect,
+            </if>
+        </trim>
+        <trim prefix="value (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="user != null and user.id != null">
+                #{user.id},
+            </if>
+            <if test="note != null and note.id != null">
+                #{note.id},
+            </if>
+            <if test="is_collect != null">
+                #{is_collect},
+            </if>
+        </trim>
+    </insert>
+
+    <!--  更新一条用户笔记  -->
+    <update id="updateUserNote" parameterType="com.wu.knowledge.usernote.model.UserNote">
+        update usernote set
+        <if test="user != null and user.id != null">
+            user = #{user.id},
+        </if>
+        <if test="note != null and note.id != null">
+            note = #{note.id},
+        </if>
+        <if test="is_collect != null">
+            is_collect = #{is_collect},
+        </if>
+        write_user = #{write_user.id,jdbcType=INTEGER},write_date = #{write_date}
+        where id = #{id}
+    </update>
+
+    <!--  删除一条用户笔记  -->
+    <delete id="deleteUserNote" parameterType="Integer">
+        delete from usernote where id = #{id}
+    </delete>
+
+
+    <!--字段映射-->
+    <!--所有映射都不使用association和collection，以后都用缓存来解决-->
+    <resultMap id="UserNoteMap" type="com.wu.knowledge.usernote.model.UserNote">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="note.id" column="note"/>
+        <result property="user.id" column="user"/>
+        <result property="is_collect" column="is_collect"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.book.dao.BookMapper">
+    <!--查询单个书籍-->
+    <select id="getBookById" parameterType="Integer" resultMap="BookMap">
+        select * from book where id = #{id}
+    </select>
+    <!--条件查询书籍数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from book
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userID != null and userID.id != null">
+                and userID = #{userID.id}
+            </if>
+            <if test="iscollection != null">
+                and iscollection = #{iscollection}
+            </if>
+            <if test="name != null and name != ''">
+                and name like CONCAT('%',#{name} , '%')
+            </if>
+            <if test="booktypeIDs!= null">
+                and
+                <foreach item="item" index="index" collection="booktypeIDs" open="(" separator="or" close=")">
+                    booktype = #{item}
+                </foreach>
+            </if>
+        </trim>
+    </select>
+    <!--条件查询书籍-->
+    <!--根据排序字段升序排序,根据创建时间降序排序-->
+    <select id="getBooks" resultMap="BookMap">
+        select * from book
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="Book.id != null">
+                and id = #{Book.id}
+            </if>
+            <if test="Book.iscollection != null">
+                and iscollection = #{Book.iscollection}
+            </if>
+            <if test="Book.userID != null and Book.userID.id != null">
+                and userID = #{Book.userID.id}
+            </if>
+            <if test="Book.name != null and Book.name != ''">
+                and name like CONCAT('%',#{Book.name} , '%')
+            </if>
+            <if test="Book.booktypeIDs!= null">
+                and
+                <foreach item="item" index="index" collection="Book.booktypeIDs" open="(" separator="or" close=")">
+                    booktype = #{item}
+                </foreach>
+            </if>
+        </trim>
+        <choose>
+            <otherwise>
+                order by create_date DESC
+            </otherwise>
+        </choose>
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+
+    <!--  添加一条书籍  -->
+    <insert id="createBook" parameterType="com.wu.knowledge.book.model.Book">
+        insert into book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="iscollection != null">
+                iscollection,
+            </if>
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="synopsis != null and synopsis != ''">
+                synopsis,
+            </if>
+            <if test="cover != null and cover.id != null">
+                cover,
+            </if>
+            <if test="popularity != null">
+                popularity,
+            </if>
+            <if test="def_popularity != null">
+                def_popularity,
+            </if>
+            <if test="author != null and author != ''">
+                author,
+            </if>
+            <if test="publisher != null and publisher != ''">
+                publisher,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            <if test="readresponse != null and readresponse != ''">
+                readresponse,
+            </if>
+            <if test="booktype != null and booktype.id != null">
+                booktype,
+            </if>
+            <if test="userID != null and userID.id != null">
+                userID,
+            </if>
+        </trim>
+        <trim prefix="value (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="iscollection != null">
+                #{iscollection},
+            </if>
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="synopsis != null and synopsis != ''">
+                #{synopsis},
+            </if>
+            <if test="cover != null and cover.id != null">
+                #{cover.id},
+            </if>
+            <if test="popularity != null">
+                #{popularity},
+            </if>
+            <if test="def_popularity != null">
+                #{def_popularity},
+            </if>
+            <if test="author != null and author != ''">
+                #{author},
+            </if>
+            <if test="publisher != null and publisher != ''">
+                #{publisher},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+            <if test="readresponse != null and readresponse != ''">
+                #{readresponse},
+            </if>
+            <if test="booktype != null and booktype.id != null">
+                #{booktype.id},
+            </if>
+            <if test="userID != null and userID.id != null">
+                #{userID.id},
+            </if>
+        </trim>
+    </insert>
+
+    <!--  更新一条书籍  -->
+    <update id="updateBook" parameterType="com.wu.knowledge.book.model.Book">
+        update book set
+        <if test="iscollection != null">
+            iscollection = #{iscollection},
+        </if>
+        <if test="sequence != null">
+            sequence = #{sequence},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name},
+        </if>
+        <if test="synopsis != null and synopsis != ''">
+            synopsis = #{synopsis},
+        </if>
+        <if test="popularity != null">
+            popularity = #{popularity},
+        </if>
+        <if test="def_popularity != null">
+            def_popularity = #{def_popularity},
+        </if>
+        <if test="cover != null and cover.id != null">
+            cover = #{cover.id},
+        </if>
+        <if test="author != null and author != ''">
+            author = #{author},
+        </if>
+        <if test="publisher != null and publisher != ''">
+            publisher = #{publisher},
+        </if>
+        <if test="booktype != null and booktype.id != null">
+            booktype = #{booktype.id},
+        </if>
+        <if test="userID != null and userID.id != null">
+            userID = #{userID.id},
+        </if>
+        <if test="remark != null and remark != ''">
+            remark = #{remark},
+        </if>
+        <if test="readresponse != null and readresponse != ''">
+            readresponse = #{readresponse},
+        </if>
+        write_user = #{write_user.id,jdbcType=INTEGER},write_date = #{write_date}
+        where id = #{id}
+    </update>
+
+    <!--  删除一条书籍  -->
+    <!--<delete id="deleteBook" parameterType="Integer">
+        delete from book where id = #{id}
+    </delete>-->
+    <!--删除书籍-->
+    <delete id="deleteBook">
+        delete from book where id in
+        <foreach item="idItem" collection="array" open="(" separator=","
+                 close=")">
+            #{idItem}
+        </foreach>
+    </delete>
+
+
+    <!--字段映射-->
+    <!--所有映射都不使用association和collection，以后都用缓存来解决-->
+    <resultMap id="BookMap" type="com.wu.knowledge.book.model.Book">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="sequence" column="sequence"/>
+        <result property="iscollection" column="iscollection"/>
+        <result property="name" column="name"/>
+        <result property="synopsis" column="synopsis"/>
+        <result property="cover.id" column="cover"/>
+        <result property="def_popularity" column="def_popularity"/>
+        <result property="author" column="author"/>
+        <result property="publisher" column="publisher"/>
+        <result property="remark" column="remark"/>
+        <result property="readresponse" column="readresponse"/>
+        <result property="booktype.id" column="booktype"/>
+        <result property="userID.id" column="userID"/>
+    </resultMap>
+</mapper>

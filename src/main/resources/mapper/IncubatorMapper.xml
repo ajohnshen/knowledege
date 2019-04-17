@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.incubator.dao.IncubatorMapper">
+    <!--查询单个孵化-->
+    <select id="getIncubatorById" parameterType="Integer" resultMap="IncubatorMap">
+        select * from hz_incubator where id = #{id}
+    </select>
+    <!--条件查询孵化数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from hz_incubator
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="active != null">
+                and active = #{active}
+            </if>
+            <if test="name != null and name != ''">
+                and name like CONCAT('%',#{name} , '%')
+            </if>
+
+            <if test="address != null and address != ''">
+                and address like CONCAT('%',#{address} , '%')
+            </if>
+
+            <if test="price != null">
+                <choose>
+                    <when test="price==20">
+                        and price &gt;= 0 and price &lt;= 20
+                    </when>
+                    <when test="price==40">
+                        and price &gt;= 20 and price &lt;= 40
+                    </when>
+                    <when test="price==60">
+                        and price &gt;= 40 and price &lt;= 60
+                    </when>
+                    <when test="price==80">
+                        and price &gt;= 60 and price &lt;= 80
+                    </when>
+                    <when test="price==100">
+                        and price &gt;= 80 and price &lt;= 1000
+                    </when>
+                    <otherwise>
+                        and price &gt;= 100
+                    </otherwise>
+                </choose>
+            </if>
+
+        </trim>
+    </select>
+    <!--条件查询孵化-->
+    <!--根据排序字段升序排序,根据创建时间降序排序-->
+    <select id="getIncubators" resultMap="IncubatorMap">
+        select * from hz_incubator a
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="Incubator.id != null">
+                and id = #{Incubator.id}
+            </if>
+            <if test="Incubator.active != null">
+                and active = #{Incubator.active}
+            </if>
+            <if test="Incubator.name != null and Incubator.name != ''">
+                and name like CONCAT('%',#{Incubator.name} , '%')
+            </if>
+            <if test="Incubator.address != null and Incubator.address != ''">
+                and address like CONCAT('%',#{Incubator.address} , '%')
+            </if>
+            <if test="Incubator.renting_area != null">
+                <choose>
+                    <when test="Incubator.renting_area == 1001">
+                        and renting_area &gt;= 1001
+                    </when>
+                    <otherwise>
+                        and renting_area &gt;= #{Incubator.renting_area}
+                    </otherwise>
+                </choose>
+            </if>
+
+            <if test="Incubator.price != null and Incubator.price != ''">
+                <choose>
+                    <when test="Incubator.price==20">
+                        and price &gt;= 0 and price &lt;= 20
+                    </when>
+                    <when test="Incubator.price==40">
+                        and price &gt;= 20 and price &lt;= 40
+                    </when>
+                    <when test="Incubator.price==60">
+                        and price &gt;= 40 and price &lt;= 60
+                    </when>
+                    <when test="Incubator.price==80">
+                        and price &gt;= 60 and price &lt;= 80
+                    </when>
+                    <when test="Incubator.price==100">
+                        and price &gt;= 80 and price &lt;= 1000
+                    </when>
+                    <otherwise>
+                        and price &gt;= 100
+                    </otherwise>
+                </choose>
+            </if>
+
+        </trim>
+        <choose>
+            <otherwise>
+                order by create_date DESC
+            </otherwise>
+        </choose>
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+
+    <!--  添加一条孵化  -->
+    <insert id="createIncubator" parameterType="com.wu.knowledge.incubator.model.Incubator">
+        insert into hz_incubator
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="active != null">
+                active,
+            </if>
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="advantage != null and advantage != ''">
+                advantage,
+            </if>
+            <if test="popularity != null">
+                popularity,
+            </if>
+            <if test="def_popularity != null">
+                def_popularity,
+            </if>
+            <if test="address != null and address != ''">
+                address,
+            </if>
+            <if test="renting_area != null and renting_area != ''">
+                renting_area,
+            </if>
+            <if test="price != null and price !=''">
+                price,
+            </if>
+            <if test="property != null and property !=''">
+                property,
+            </if>
+            <if test="profile != null and profile != ''">
+                profile,
+            </if>
+            <if test="coordinate != null and coordinate != ''">
+                coordinate,
+            </if>
+            <if test="area != null and area != ''">
+                area,
+            </if>
+
+            <if test="elevator != null and elevator != ''">
+                elevator,
+            </if>
+            <if test="electricity != null and electricity != ''">
+                electricity,
+            </if>
+            <if test="virescence != null and virescence != ''">
+                virescence,
+            </if>
+            <if test="building != null and building != ''">
+                building,
+            </if>
+            <if test="broadband != null and broadband != ''">
+                broadband,
+            </if>
+            <if test="water != null and water != ''">
+                water,
+            </if>
+            <if test="storey != null and storey != ''">
+                storey,
+            </if>
+            <if test="park != null and park != ''">
+                park,
+            </if>
+            <if test="park_price != null and park_price != ''">
+                park_price,
+            </if>
+            <if test="subway != null and subway != ''">
+                subway,
+            </if>
+            <if test="bus != null and bus != ''">
+                bus,
+            </if>
+        </trim>
+        <trim prefix="value (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="active != null">
+                #{active},
+            </if>
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="advantage != null and advantage != ''">
+                #{advantage},
+            </if>
+
+            <if test="popularity != null">
+                #{popularity},
+            </if>
+            <if test="def_popularity != null">
+                #{def_popularity},
+            </if>
+            <if test="address != null and address != ''">
+                #{address},
+            </if>
+            <if test="renting_area != null and renting_area != ''">
+                #{renting_area},
+            </if>
+            <if test="price != null and price != ''">
+                #{price},
+            </if>
+            <if test="property != null and property !=''">
+                #{property},
+            </if>
+            <if test="profile != null and profile != ''">
+                #{profile},
+            </if>
+            <if test="coordinate != null and coordinate != ''">
+                #{coordinate},
+            </if>
+            <if test="area != null and area != ''">
+                #{area},
+            </if>
+            <if test="elevator != null and elevator != ''">
+                #{elevator},
+            </if>
+            <if test="electricity != null and electricity != ''">
+                #{electricity},
+            </if>
+            <if test="virescence != null and virescence != ''">
+                #{virescence},
+            </if>
+            <if test="building != null and building != ''">
+                #{building},
+            </if>
+            <if test="broadband != null and broadband != ''">
+                #{broadband},
+            </if>
+            <if test="water != null and water != ''">
+                #{water},
+            </if>
+            <if test="storey != null and storey != ''">
+                #{storey},
+            </if>
+            <if test="park != null and park != ''">
+                #{park},
+            </if>
+            <if test="park_price != null and park_price != ''">
+                #{park_price},
+            </if>
+            <if test="subway != null and subway != ''">
+                #{subway},
+            </if>
+            <if test="bus != null and bus != ''">
+                #{bus},
+            </if>
+        </trim>
+    </insert>
+
+    <!--  更新一条孵化  -->
+    <update id="updateIncubator" parameterType="com.wu.knowledge.incubator.model.Incubator">
+        update hz_incubator set
+            <if test="active != null">
+                active = #{active},
+            </if>
+            <if test="sequence != null">
+                sequence = #{sequence},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="advantage != null and advantage != ''">
+                advantage = #{advantage},
+            </if>
+            <if test="popularity != null">
+                popularity = #{popularity},
+            </if>
+            <if test="def_popularity != null">
+                def_popularity = #{def_popularity},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="renting_area != null and renting_area != ''">
+                renting_area = #{renting_area},
+            </if>
+            <if test="price != null and price != ''">
+                price = #{price},
+            </if>
+            <if test="property != null and property != ''">
+                property = #{property},
+            </if>
+            <if test="profile != null and profile != ''">
+                profile = #{profile},
+            </if>
+            <if test="coordinate != null and coordinate != ''">
+                coordinate = #{coordinate},
+            </if>
+            <if test="area != null and area != ''">
+                area = #{area},
+            </if>
+            <if test="elevator != null and elevator != ''">
+                elevator =  #{elevator},
+            </if>
+            <if test="electricity != null and electricity != ''">
+                electricity = #{electricity},
+            </if>
+            <if test="virescence != null and virescence != ''">
+                virescence = #{virescence},
+            </if>
+            <if test="building != null and building != ''">
+                building = #{building},
+            </if>
+            <if test="broadband != null and broadband != ''">
+                broadband = #{broadband},
+            </if>
+            <if test="water != null and water != ''">
+                water = #{water},
+            </if>
+            <if test="storey != null and storey != ''">
+                storey = #{storey},
+            </if>
+            <if test="park != null and park != ''">
+                park = #{park},
+            </if>
+            <if test="park_price != null and park_price != ''">
+                park_price = #{park_price},
+            </if>
+            <if test="subway != null and subway != ''">
+                subway = #{subway},
+            </if>
+            <if test="bus != null and bus != ''">
+                bus = #{bus},
+            </if>
+            write_user = #{write_user.id,jdbcType=INTEGER},write_date = #{write_date}
+        where id = #{id}
+    </update>
+
+    <!--  删除一条孵化  -->
+    <delete id="deleteHatch" parameterType="Integer">
+        delete from hz_incubator where id = #{id}
+    </delete>
+
+
+    <!--字段映射-->
+    <!--所有映射都不使用association和collection，以后都用缓存来解决-->
+    <resultMap id="IncubatorMap" type="com.wu.knowledge.incubator.model.Incubator">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="sequence" column="sequence"/>
+        <result property="active" column="active"/>
+        <result property="name" column="name"/>
+        <result property="advantage" column="advantage"/>
+        <result property="address" column="address"/>
+        <result property="renting_area" column="renting_area"/>
+        <result property="price" column="price"/>
+        <result property="property" column="property"/>
+        <result property="profile" column="profile"/>
+        <result property="coordinate" column="coordinate"/>
+        <result property="popularity" column="popularity"/>
+        <result property="def_popularity" column="def_popularity"/>
+        <result property="area" column="area"/>
+        <result property="elevator" column="elevator"/>
+        <result property="electricity" column="electricity"/>
+        <result property="virescence" column="virescence"/>
+        <result property="building" column="building"/>
+        <result property="broadband" column="broadband"/>
+        <result property="water" column="water"/>
+        <result property="park" column="park"/>
+        <result property="park_price" column="park_price"/>
+        <result property="subway" column="subway"/>
+        <result property="bus" column="bus"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.basedata.dictionary.dao.DictionaryMapper">
+    <cache></cache>
+    <!--增加字典-->
+    <insert id="createDictionary" parameterType="com.wu.knowledge.basedata.dictionary.model.Dictionary" flushCache="true">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into dictionary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="active != null">
+                active,
+            </if>
+            <if test="code != null and code != ''">
+                code,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="type != null and type.id != null">
+                type,
+            </if>
+        </trim>
+        <trim prefix=" values (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="active != null">
+                #{active},
+            </if>
+            <if test="code != null and code != ''">
+                #{code},
+            </if>
+
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+
+            <if test="type != null and type.id!=null">
+                #{type.id},
+            </if>
+
+        </trim>
+    </insert>
+    <!--更改字典-->
+    <update id="updateDictionary" parameterType="com.wu.knowledge.basedata.dictionary.model.Dictionary" flushCache="true">
+        update dictionary set
+        <if test="sequence != null">
+            sequence = #{sequence},
+        </if>
+        <if test="active != null">
+            active = #{active},
+        </if>
+        <if test="type != null and type.id!=null">
+            type = #{type.id},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name},
+        </if>
+        <if test="code != null and code != ''">
+            code = #{code},
+        </if>
+        write_user = #{write_user.id,jdbcType=INTEGER},write_date = #{write_date}
+        where id = #{id}
+    </update>
+    <!--查询单个字典数据-->
+    <select id="getDictionaryById" parameterType="Integer" resultMap="dictionaryMap" useCache="true">
+        select * from dictionary where id =#{id}
+    </select>
+    <!--通过编号查询单个字典数据-->
+    <select id="getDictionaryByCode" parameterType="java.lang.String" resultMap="dictionaryMap" useCache="true">
+        select * from dictionary where code =#{code}
+    </select>
+    <!--条件查询字典数据数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from dictionary
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="active != null">
+                and active = #{active}
+            </if>
+            <if test="code != null and code != ''">
+                and code like CONCAT('%',#{code} , '%')
+            </if>
+            <if test="name != null and name != ''">
+                and name like CONCAT('%',#{name} , '%')
+            </if>
+            <if test="type != null and type.id != null">
+                and type = #{type.id}
+            </if>
+        </trim>
+    </select>
+    <!--条件查询字典数据-->
+    <!--根据顺序字段升序排序，根据创建时间升序排序-->
+    <select id="getDictionaries" resultMap="dictionaryMap" useCache="true">
+        select * from dictionary
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="Dictionary.id != null">
+                and id=#{Dictionary.id}
+            </if>
+            <if test="Dictionary.active != null">
+                and active = #{Dictionary.active}
+            </if>
+            <if test="Dictionary.code != null and Dictionary.code != ''">
+                and code like CONCAT('%',#{Dictionary.code} , '%')
+            </if>
+            <if test="Dictionary.name != null and Dictionary.name != ''">
+                and name like CONCAT('%',#{Dictionary.name} , '%')
+            </if>
+            <if test="Dictionary.type != null and Dictionary.type.id != null">
+                and type = #{Dictionary.type.id}
+            </if>
+        </trim>
+        order by if(isnull(sequence),1,0),sequence ASC,create_date ASC
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+    <!--字段映射-->
+    <!--所有映射都不使用association和collection，以后都用缓存来解决-->
+    <resultMap id="dictionaryMap" type="com.wu.knowledge.basedata.dictionary.model.Dictionary">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="sequence" column="sequence"/>
+        <result property="active" column="active"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="type.id" column="type"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.file.dao.FileMapper">
+    <cache></cache>
+    <!--创建文件-->
+    <insert id="createFile" parameterType="com.wu.knowledge.file.model.File1" flushCache="true">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="active != null">
+                active,
+            </if>
+            <if test="file_name != null and file_name != ''">
+                file_name,
+            </if>
+            <if test="file_type != null and file_type.id!=null">
+                file_type,
+            </if>
+            <if test="file_size != null">
+                file_size,
+            </if>
+            <if test="file_path != null and file_path != ''">
+                file_path,
+            </if>
+            <if test="file_suffix != null and file_suffix != ''">
+                file_suffix,
+            </if>
+            <if test="video != null">
+                video,
+            </if>
+        </trim>
+        <trim prefix=" values (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="active != null">
+                #{active},
+            </if>
+            <if test="file_name != null and file_name != ''">
+                #{file_name},
+            </if>
+            <if test="file_type != null and file_type.id!=null">
+                #{file_type.id},
+            </if>
+            <if test="file_size != null">
+                #{file_size},
+            </if>
+            <if test="file_path != null and file_path != ''">
+                #{file_path},
+            </if>
+            <if test="file_suffix != null and file_suffix != ''">
+                #{file_suffix},
+            </if>
+            <if test="video != null">
+                #{video},
+            </if>
+        </trim>
+    </insert>
+    <!--查询单个文件-->
+    <select id="getFileById" parameterType="Integer" resultMap="File1Map" flushCache="true">
+        select * from file where id =#{id}
+    </select>
+    <!--条件查询文件数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from file
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="active != null">
+                and active = #{active}
+            </if>
+            <if test="file_name != null and file_name != ''">
+                and file_name like CONCAT('%',#{file_name} , '%')
+            </if>
+            <if test="file_type != null and file_type.id != null">
+                and file_type = #{file_type.id}
+            </if>
+            <if test="video != null">
+                and video = #{video}
+            </if>
+        </trim>
+    </select>
+    <!--条件查询文件-->
+    <!--根据顺序字段升序排序，根据创建时间降序排序-->
+    <select id="getFiles" resultMap="File1Map" useCache="true">
+        select * from file
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="File.id != null">
+                and id=#{File.id}
+            </if>
+            <if test="File.active != null">
+                and active = #{File.active}
+            </if>
+            <if test="File.file_name != null and File.file_name != ''">
+                and file_name like CONCAT('%',#{File.file_name} , '%')
+            </if>
+            <if test="File.file_type != null and File.file_type.id != null">
+                and file_type = #{File.file_type.id}
+            </if>
+            <if test="File.video != null">
+                and video=#{File.video}
+            </if>
+        </trim>
+        order by sequence ASC,create_date DESC
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+    <!--字段映射-->
+    <!--所有映射都不使用association和collection，以后都用缓存来解决-->
+    <resultMap id="File1Map" type="com.wu.knowledge.file.model.File1">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="sequence" column="sequence"/>
+        <result property="active" column="active"/>
+        <result property="file_name" column="file_name"/>
+        <result property="file_type.id" column="file_type"/>
+        <result property="file_size" column="file_size"/>
+        <result property="file_path" column="file_path"/>
+        <result property="file_suffix" column="file_suffix"/>
+        <result property="video" column="video"/>
+    </resultMap>
+</mapper>

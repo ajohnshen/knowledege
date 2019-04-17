@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wu.knowledge.usercourse.dao.UserCourseMapper">
+    <!--查询单个用户课程-->
+    <select id="getUserCourseById" parameterType="Integer" resultMap="UserCourseMap">
+        select * from usercourse where id = #{id}
+    </select>
+    <!--条件查询用户课程数量-->
+    <select id="totalSize" resultType="Integer">
+        select count(*) from usercourse
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="user != null and user.id != null">
+                and user = #{user.id}
+            </if>
+            <if test="course != null and course.id != null">
+                and course = #{course.id}
+            </if>
+            <if test="is_collect != null">
+                and is_collect = #{is_collect}
+            </if>
+        </trim>
+    </select>
+    <!--条件查询用户课程-->
+    <!--根据排序字段升序排序,根据创建时间降序排序-->
+    <select id="getUserCourses" resultMap="UserCourseMap">
+        select * from usercourse
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="UserCourse.id != null">
+                and id = #{UserCourse.id}
+            </if>
+            <if test="UserCourse.user != null and UserCourse.user.id != null">
+                and user = #{UserCourse.user.id}
+            </if>
+            <if test="UserCourse.course != null and UserCourse.course.id != null">
+                and course = #{UserCourse.course.id}
+            </if>
+            <if test="UserCourse.is_collect != null">
+                and is_collect = #{UserCourse.is_collect}
+            </if>
+        </trim>
+        <choose>
+            <otherwise>
+                order by create_date DESC
+            </otherwise>
+        </choose>
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+
+    <!--  添加一条用户课程  -->
+    <insert id="createUserCourse" parameterType="com.wu.knowledge.usercourse.model.UserCourse">
+        insert into usercourse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_user,create_date,write_user,write_date,
+            <if test="user != null and user.id != null">
+                user,
+            </if>
+            <if test="course != null and course.id != null">
+                course,
+            </if>
+            <if test="is_collect != null">
+                is_collect,
+            </if>
+        </trim>
+        <trim prefix="value (" suffix=")" suffixOverrides=",">
+            #{create_user.id,jdbcType=INTEGER},#{create_date},#{write_user.id,jdbcType=INTEGER},#{write_date},
+            <if test="user != null and user.id != null">
+                #{user.id},
+            </if>
+            <if test="course != null and course.id != null">
+                #{course.id},
+            </if>
+            <if test="is_collect != null">
+                #{is_collect},
+            </if>
+        </trim>
+    </insert>
+
+    <!--  更新一条用户课程  -->
+    <update id="updateUserCourse" parameterType="com.wu.knowledge.usercourse.model.UserCourse">
+        update usercourse set
+        <if test="user != null and user.id != null">
+            user = #{user.id},
+        </if>
+        <if test="course != null and course.id != null">
+            course = #{course.id},
+        </if>
+        <if test="is_collect != null">
+            is_collect = #{is_collect},
+        </if>
+        write_user = #{write_user.id,jdbcType=INTEGER},write_date = #{write_date}
+        where id = #{id}
+    </update>
+
+    <!--  删除一条用户课程  -->
+    <delete id="deleteUserCourse" parameterType="Integer">
+        delete from usercourse where id = #{id}
+    </delete>
+
+
+    <!--字段映射-->
+    <!--所有映射都不使用association和collection，以后都用缓存来解决-->
+    <resultMap id="UserCourseMap" type="com.wu.knowledge.usercourse.model.UserCourse">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="create_user.id" column="create_user"/>
+        <result property="create_date" column="create_date"/>
+        <result property="write_user.id" column="write_user"/>
+        <result property="write_date" column="write_date"/>
+        <result property="course.id" column="course"/>
+        <result property="user.id" column="user"/>
+        <result property="is_collect" column="is_collect"/>
+    </resultMap>
+</mapper>

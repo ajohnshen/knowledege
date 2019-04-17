@@ -1,0 +1,30 @@
+server:
+  # 服务器端口号
+  port: 9090
+spring:
+  # 数据库基本信息配置
+  datasource:
+    url: jdbc:mysql://localhost:3316/knowledge?allowMultiQueries=true&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+mybatis:
+  # mybatis映射文件位置
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    # 扫描mybatis映射文件并绑定日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 开启mybatis二级缓存(项目数据量大，查询时间超过三秒时开启)
+#    cache-enabled: true
+logging:
+  # 日志输出路径
+  path: ./logs/
+  # 日志输出等级
+  level:
+    # 整个项目的默认日志等级
+    root: INFO
+    # WEB应用的日志等级
+    org.springframework.web: ERROR
+    # Mybatis的日志等级
+    org.mybatis: WARN
