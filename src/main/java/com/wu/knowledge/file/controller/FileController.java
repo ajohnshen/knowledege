@@ -165,16 +165,9 @@ public class FileController {
             @RequestParam(value = "pageNo", required = false) String pageNo,//页码从0开始
             @RequestParam(value = "pageSize", required = false) String pageSize//每页显示数
     ) {
-        User user = null;
-        if (null != loginKey) {
-            user = MyCache.getLoginUsersMap().get(loginKey);
-            if (null == user) {
-                return MyUtils.setMyErrorJson(MyConstant.returnNoLoginErrorCode, MyErrorMsg.loginStatusError);
-            }
-        }
-        //必填字段校验
         List<Map<String, Object>> fieldList = new LinkedList<>();
         Map<String, Object> fieldMap = new HashMap<>();
+        fieldMap.put("loginKey", loginKey);
         fieldList.add(fieldMap);
         try {
             MyUtils.fieldCheck(fieldList);
@@ -182,6 +175,14 @@ public class FileController {
             e.printStackTrace();
             return MyUtils.setMyErrorJson(MyConstant.returnGeneralErrorCode, e.getMessage());
         }
+        User user = null;
+        if (null != loginKey) {
+            user = MyCache.getLoginUsersMap().get(loginKey);
+            if (null == user) {
+                return MyUtils.setMyErrorJson(MyConstant.returnNoLoginErrorCode, MyErrorMsg.loginStatusError);
+            }
+        }
+
         File1 file = new File1();
         file.setId(id);
         file.setActive(active);
@@ -190,6 +191,9 @@ public class FileController {
         d.setId(file_type);
         file.setFile_type(d);
         file.setVideo(video);
+        if(user!=null){
+            file.setUserID(user);
+        }
         int pNo;
         int pSize;
         try {
@@ -200,6 +204,43 @@ public class FileController {
             return MyUtils.setMyErrorJson(MyConstant.returnGeneralErrorCode, MyErrorMsg.pagingError);
         }
         Map<String, Object> map = fileService.getFiles(user, file, pNo, pSize);
+        return MyUtils.returnJson(map, (MyError) map.get("error"));
+    }
+
+    //删除文件
+    @ResponseBody
+    @RequestMapping("/deleteFile")
+    public Object deleteFile(
+            @RequestParam(value = "loginKey", required = false) String loginKey,
+            @RequestParam(value = "ids", required = false) String ids
+    ) {
+        //必填字段校验
+        List<Map<String, Object>> fieldList = new LinkedList<>();
+        Map<String, Object> fieldMap = new HashMap<>();
+        fieldMap.put("loginKey", loginKey);
+        fieldMap.put("书籍id", ids);
+        fieldList.add(fieldMap);
+        try {
+            MyUtils.fieldCheck(fieldList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MyUtils.setMyErrorJson(MyConstant.returnGeneralErrorCode, e.getMessage());
+        }
+        User user = null;
+        if (MyUtils.StringIsNotNull(loginKey)) {
+            user = MyCache.getLoginUsersMap().get(loginKey);
+            if (null == user) {
+                return MyUtils.setMyErrorJson(MyConstant.returnNoLoginErrorCode, MyErrorMsg.loginStatusError);
+            }
+        }
+        Integer[] Ids;
+        try {
+            Ids = MyUtils.arrayChange(ids);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MyUtils.setMyErrorJson(MyConstant.returnGeneralErrorCode, e.getMessage());
+        }
+        Map<String, Object> map = fileService.deleteFile(Ids);
         return MyUtils.returnJson(map, (MyError) map.get("error"));
     }
 

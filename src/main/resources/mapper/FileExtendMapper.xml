@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wu.knowledge.file.dao.FileMapper">
+<mapper namespace="com.wu.knowledge.fileextend.dao.FileExtendMapper">
     <cache></cache>
     <!--创建文件-->
-    <insert id="createFile" parameterType="com.wu.knowledge.file.model.File1" flushCache="true">
+    <insert id="createFile" parameterType="com.wu.knowledge.fileextend.model.File1" flushCache="true">
         <selectKey resultType="Integer" order="AFTER" keyProperty="id">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into file
+        insert into fileextend
         <trim prefix="(" suffix=")" suffixOverrides=",">
             create_user,create_date,write_user,write_date,
             <if test="sequence != null">
@@ -65,11 +65,11 @@
     </insert>
     <!--查询单个文件-->
     <select id="getFileById" parameterType="Integer" resultMap="File1Map" flushCache="true">
-        select * from file where id =#{id}
+        select * from fileextend where id =#{id}
     </select>
     <!--条件查询文件数量-->
     <select id="totalSize" resultType="Integer">
-        select count(*) from file
+        select count(*) from fileextend
         <trim prefix="where" prefixOverrides="and|or">
             <if test="id != null">
                 and id = #{id}
@@ -86,15 +86,12 @@
             <if test="video != null">
                 and video = #{video}
             </if>
-            <if test="userID != null and userID.id != null">
-                and userID = #{userID.id}
-            </if>
         </trim>
     </select>
     <!--条件查询文件-->
     <!--根据顺序字段升序排序，根据创建时间降序排序-->
     <select id="getFiles" resultMap="File1Map" useCache="true">
-        select * from file
+        select * from fileextend
         <trim prefix="where" prefixOverrides="and|or">
             <if test="File.id != null">
                 and id=#{File.id}
@@ -111,26 +108,15 @@
             <if test="File.video != null">
                 and video=#{File.video}
             </if>
-            <if test="File.userID != null and File.userID.id != null">
-                and userID = #{File.userID.id}
-            </if>
         </trim>
         order by sequence ASC,create_date DESC
         <if test="pageStart != null and pageSize != null">
             limit #{pageStart},#{pageSize}
         </if>
     </select>
-
-    <delete id="deleteFile">
-        delete from file where id in
-        <foreach item="idItem" collection="array" open="(" separator=","
-                 close=")">
-            #{idItem}
-        </foreach>
-    </delete>
     <!--字段映射-->
     <!--所有映射都不使用association和collection，以后都用缓存来解决-->
-    <resultMap id="File1Map" type="com.wu.knowledge.file.model.File1">
+    <resultMap id="File1Map" type="com.wu.knowledge.fileextend.model.File1">
         <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="create_user.id" column="create_user"/>
         <result property="create_date" column="create_date"/>

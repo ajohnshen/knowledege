@@ -59,10 +59,7 @@ public class BaseModel implements Serializable {
      */
     private String name;
 
-    /**
-     * 封面(文件ID)
-     */
-    private File1 cover;
+
 
     /**
      * 关联用户
@@ -149,14 +146,6 @@ public class BaseModel implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public File1 getCover() {
-        return cover;
-    }
-
-    public void setCover(File1 cover) {
-        this.cover = cover;
     }
 
     public String getSynopsis() {

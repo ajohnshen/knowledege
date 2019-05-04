@@ -35,4 +35,9 @@ public interface IFileService {
      * @param pageSize 查询数
      */
     Map<String, Object> getFiles(User user, File1 file, Integer pageNo, Integer pageSize);
+
+    /**
+     * 删除文件
+     */
+    Map<String, Object> deleteFile(Integer[] ids);
 }

@@ -9,6 +9,7 @@ import com.wu.knowledge.common.constant.MyErrorMsg;
 import com.wu.knowledge.common.model.MyError;
 import com.wu.knowledge.common.utils.MyUtils;
 import com.wu.knowledge.file.dao.FileMapper;
+import com.wu.knowledge.fileextend.dao.FileExtendMapper;
 import com.wu.knowledge.user.model.User;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class BookServiceImpl implements IBookService {
     @Resource
     private DictionaryMapper dictionaryMapper;
     @Resource
-    private FileMapper fileMapper;
+    private FileExtendMapper fileExtendMapper;
 
     //条件查询书籍
     @Override
@@ -86,8 +87,8 @@ public class BookServiceImpl implements IBookService {
                 //书籍封面
                 //MyUtils.packFileMap("cover", b.getCover(), mapOt, fileMapper, dictionaryMapper, false);
                 if(b.getCover() != null){
-                    mapOt.put("logoPath","../knowledge/"+fileMapper.getFileById(b.getCover().getId()).getFile_path());
-                    mapOt.put("indexLogoPath","knowledge/"+fileMapper.getFileById(b.getCover().getId()).getFile_path());
+                    mapOt.put("logoPath","../knowledge/"+fileExtendMapper.getFileById(b.getCover().getId()).getFile_path());
+                    mapOt.put("indexLogoPath","knowledge/"+fileExtendMapper.getFileById(b.getCover().getId()).getFile_path());
                 }
 
                 listMap.add(mapOt);

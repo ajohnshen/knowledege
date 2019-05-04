@@ -2,6 +2,7 @@ package com.wu.knowledge.book.model;
 
 import com.wu.knowledge.basedata.dictionary.model.Dictionary;
 import com.wu.knowledge.common.model.BaseModel;
+import com.wu.knowledge.fileextend.model.File1;
 
 /**
  * 〈功能简述〉<br>
@@ -38,6 +39,10 @@ public class Book extends BaseModel {
      * 书籍类型数组
      */
     private Integer[] booktypeIDs;
+    /**
+     * 封面(文件ID)
+     */
+    private File1 cover;
 
     public Integer getPopularity() {
         return popularity;
@@ -93,5 +98,13 @@ public class Book extends BaseModel {
 
     public void setReadresponse(String readresponse) {
         this.readresponse = readresponse;
+    }
+
+    public File1 getCover() {
+        return cover;
+    }
+
+    public void setCover(File1 cover) {
+        this.cover = cover;
     }
 }

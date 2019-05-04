@@ -8,7 +8,7 @@ import com.wu.knowledge.common.constant.MyConstant;
 import com.wu.knowledge.common.constant.MyErrorMsg;
 import com.wu.knowledge.common.model.MyError;
 import com.wu.knowledge.common.utils.MyUtils;
-import com.wu.knowledge.file.model.File1;
+import com.wu.knowledge.fileextend.model.File1;
 import com.wu.knowledge.user.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

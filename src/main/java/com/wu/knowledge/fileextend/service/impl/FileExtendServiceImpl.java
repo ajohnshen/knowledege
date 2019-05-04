@@ -1,14 +1,12 @@
-package com.wu.knowledge.file.service.impl;
-
-
+package com.wu.knowledge.fileextend.service.impl;
 import com.wu.knowledge.basedata.dictionary.dao.DictionaryMapper;
 import com.wu.knowledge.common.constant.MyConstant;
 import com.wu.knowledge.common.constant.MyErrorMsg;
 import com.wu.knowledge.common.model.MyError;
 import com.wu.knowledge.common.utils.MyUtils;
-import com.wu.knowledge.file.dao.FileMapper;
-import com.wu.knowledge.file.model.File1;
-import com.wu.knowledge.file.service.IFileService;
+import com.wu.knowledge.fileextend.dao.FileExtendMapper;
+import com.wu.knowledge.fileextend.model.File1;
+import com.wu.knowledge.fileextend.service.IFileExtendService;
 import com.wu.knowledge.user.dao.UserMapper;
 import com.wu.knowledge.user.model.User;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,18 +16,17 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
  * 文件服务层实现类
- * Created by WSD on 2018/11/30.
+ * Created by WSD on 2019/3/20.
  */
-@Service("fileService")
-public class FileServiceImpl implements IFileService {
+@Service("fileExtendService")
+public class FileExtendServiceImpl implements IFileExtendService {
 
     @Resource
-    private FileMapper fileMapper;
+    private FileExtendMapper fileExtendMapper;
     //暂时未做缓存，缓存框架搭好后只有对应的服务层才能直接调用DAO
     @Resource
     private UserMapper userMapper;
@@ -47,10 +44,9 @@ public class FileServiceImpl implements IFileService {
         file.setWrite_user(user);
         file.setCreate_date(date);
         file.setWrite_date(date);
-        file.setUserID(user);
         int count;
         try {
-            count = fileMapper.createFile(file);
+            count = fileExtendMapper.createFile(file);
             if (count <= 0) {
                 return MyUtils.setMyErrorMap(MyConstant.returnGeneralErrorCode, MyErrorMsg.createError);
             }
@@ -79,8 +75,8 @@ public class FileServiceImpl implements IFileService {
                 StringBuilder filePath1 = new StringBuilder();
                 filePath.append("D:/InstallSoftware/AppServ/www/knowledge/");
                 filePath.append(MyConstant.Catalog.getValueByKey(catalog));
-                //filePath.append(MyUtils.dateToStr(new Date(), "yyyyMMdd"));
-                //filePath.append("/");
+                filePath.append(MyUtils.dateToStr(new Date(), "yyyyMMdd"));
+                filePath.append("/");
                 //加密名字
                 String fileNameMD5 = MyUtils.getMD5(file.getOriginalFilename());
                 String fileName = file.getOriginalFilename();
@@ -93,8 +89,8 @@ public class FileServiceImpl implements IFileService {
                     fileFolder.mkdirs();
                 }
                 //上传
-                //File file1 = new File(fileFolder,fileNameMD5+fileSuffix);
-                File file1 = new File(fileFolder,fileName);
+                File file1 = new File(fileFolder,fileNameMD5+fileSuffix);
+                //File file1 = new File(fileFolder,fileName);
                 file.transferTo(file1);
 
                 //文件目录+当月文件名+文件名+文件后缀
@@ -108,8 +104,8 @@ public class FileServiceImpl implements IFileService {
                 f.setFile_size((int) file.getSize());
                 //文件路径（重要
                 filePath1.append("file/");
-                //filePath1.append(MyUtils.dateToStr(new Date(), "yyyyMMdd"));
-                //filePath1.append("/");
+                filePath1.append(MyUtils.dateToStr(new Date(), "yyyyMMdd"));
+                filePath1.append("/");
                 filePath1.append(fileNameMD5);
                 filePath1.append(fileSuffix);
                 f.setFile_path(filePath1.toString());
@@ -139,7 +135,7 @@ public class FileServiceImpl implements IFileService {
         int pageStartNo = pageSize * pageNo;
         int pageEndNo = pageSize * (pageNo + 1);
         //条件查询出的总数
-        int totalSize = fileMapper.totalSize(file);
+        int totalSize = fileExtendMapper.totalSize(file);
         mapObj.put("totalSize", totalSize);
         //判断下一页是否还有数据
         boolean isNext = false;
@@ -147,7 +143,7 @@ public class FileServiceImpl implements IFileService {
             isNext = true;
         }
         mapObj.put("isNext", isNext);
-        List<File1> files = fileMapper.getFiles(file, pageStartNo, pageSize);
+        List<File1> files = fileExtendMapper.getFiles(file, pageStartNo, pageSize);
         List<Map<String, Object>> listMap = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(files)) {
             for (File1 f : files) {
@@ -184,17 +180,6 @@ public class FileServiceImpl implements IFileService {
             }
         }
         mapObj.put("list", listMap);
-        return MyUtils.setDateMap(myError, mapObj);
-    }
-
-    @Override
-    public Map<String, Object> deleteFile(Integer[] ids) {
-        Map<String, Object> mapObj = new HashMap<>();
-        MyError myError = new MyError();
-        int count = fileMapper.deleteFile(ids);
-        if (count < 1) {
-            return MyUtils.setMyErrorMap(MyConstant.returnGeneralErrorCode, MyErrorMsg.deleteError);
-        }
         return MyUtils.setDateMap(myError, mapObj);
     }
 }

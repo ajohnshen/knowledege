@@ -1,7 +1,5 @@
 package com.wu.knowledge.fileextend.service;
 
-
-
 import com.wu.knowledge.fileextend.model.File1;
 import com.wu.knowledge.user.model.User;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +11,7 @@ import java.util.Map;
  * 文件服务层接口
  * Created by WSD on 2019/3/20.
  */
-public interface IFileService {
+public interface IFileExtendService {
 
     /**
      * 创建文件

@@ -2,6 +2,7 @@ package com.wu.knowledge.user.model;
 
 import com.wu.knowledge.basedata.dictionary.model.Dictionary;
 import com.wu.knowledge.common.model.BaseModel;
+import com.wu.knowledge.file.model.File1;
 
 import java.util.Date;
 
@@ -50,6 +51,11 @@ public class User extends BaseModel {
      * 学校
      */
     private String school;
+
+    /**
+     * 封面(文件ID)
+     */
+    private File1 cover;
 
     public String getUser_name() {
         return user_name;
@@ -113,5 +119,13 @@ public class User extends BaseModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public File1 getCover() {
+        return cover;
+    }
+
+    public void setCover(File1 cover) {
+        this.cover = cover;
     }
 }

@@ -39,4 +39,9 @@ public interface FileMapper {
     List<File1> getFiles(@Param("File") File1 file, @Param("pageStart") Integer pageStart,
                          @Param("pageSize") Integer pageSize);
 
+    /**
+     * 删除文件
+     */
+    int deleteFile(Integer[] ids);
+
 }

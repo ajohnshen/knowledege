@@ -78,7 +78,7 @@ public class NoteController {
         //关联文件
         File1 fileNote = new File1();
         fileNote.setId(cover);
-        note.setCover(fileNote);
+        //note.setCover(fileNote);
         //关联字典
         Dictionary notetypeDic = new Dictionary();
         notetypeDic.setId(notetype);
@@ -131,7 +131,7 @@ public class NoteController {
         //关联文件
         File1 fileNote = new File1();
         fileNote.setId(cover);
-        note.setCover(fileNote);
+        //note.setCover(fileNote);
         //关联字典
         Dictionary notetypeDic = new Dictionary();
         notetypeDic.setId(notetype);
